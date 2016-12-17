@@ -79,7 +79,6 @@ export function getFeedData(user, cb) {
     cb(JSON.parse(xhr.responseText));
   });
 }
-
 /**
  * Adds a new status update to the database.
  */
@@ -117,7 +116,6 @@ export function likeFeedItem(feedItemId, userId, cb) {
     cb(JSON.parse(xhr.responseText));
   });
 }
-
 /**
  * Updates a feed item's likeCounter by removing the user from the likeCounter.
  * Provides an updated likeCounter in the response.
@@ -127,7 +125,6 @@ export function unlikeFeedItem(feedItemId, userId, cb) {
     cb(JSON.parse(xhr.responseText));
   });
 }
-
 /**
  * Adds a 'like' to a comment.
  */
@@ -163,7 +160,6 @@ export function deleteFeedItem(feedItemId, cb) {
     cb();
   });
 }
-
 /**
  * Searches for feed items with the given text.
  */
@@ -172,19 +168,37 @@ export function searchForFeedItems(queryText, cb) {
     cb(JSON.parse(xhr.responseText));
   });
 }
-
 /**
  * Authenticates the user with the server.
  * We will fill this in later on in the workshop.
  */
 export function login(email, password, cb) {
-
+  sendXHR('POST', '/login', { email: email, password: password},
+    (xhr) => {
+        // Success callback: Login succeeded.
+        var authData = JSON.parse(xhr.responseText);
+        // Update credentials and indicate success via the callback!
+        updateCredentials(authData.user, authData.token);
+        cb(true);
+      }, () => {
+        // Error callback: Login failed.
+        cb(false);
+      });
 }
 
 /**
  * Signs the user up for a Facebook account.
  * We will fill this in later on in the workshop.
  */
-export function signup(email, fullName, password, cb) {
-  
-}
+ export function signup(email, fullName, password, cb) {
+   sendXHR('POST', '/user', { fullName: fullName,
+                              email: email,
+                              password: password }, () => {
+     // Called when signup succeeds! Return true for success.
+     cb(true);
+   }, () => {
+     // Called when the server returns an error code!
+     // Return false for failure.
+     cb(false);
+   });
+ }
